@@ -7,10 +7,12 @@ The purpose of the code is not to necessarily create a final project but to lear
 Python Sidequest.py
 * Follow the text-based prompts
 * There is no goal, just see what you can gather about the character you encountered
+* Right now, you can ask the character their name and check their aggression level.
+* Different aggression levels garner different responses--asking a character's name twice may upset them.
 
 ## Key Notes
-* The code is heavily documented for the benefit of the code reader
-* Code review is the primary purpose of this project
+* The code is not highly legible, as it is written by a beginner
+* Code learning--not review--is the purpose of this project
 
 ## How to Use
 * Upon running the program, you will immediately be etered into an Encounter with an NPC (Non-Player Character)

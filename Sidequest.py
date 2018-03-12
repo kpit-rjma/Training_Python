@@ -1,14 +1,19 @@
 import sys
 import random
+import os
+import string
 
 # Sidequest Methodology
 # Define a sidequest as a turn-based interaction between player & NPC
 # TurnNumber: The turn number
 # Characteristics: Dictionary of values containing data about stats,
-# populated later.
+# populated by a call.
 class Sidequest:
+
+	# The following is the initialization of the Sidequest object, originally meant to be a
+	# new state for a larger game.
     def __init__(self):
-        self.turnnumber = 0;
+        self.turnnumber = 0
         self.characteristics = {
             "Name": "???",
             # Health, values 10 to 300, can drop
@@ -18,11 +23,14 @@ class Sidequest:
             # Intelligence, 1 to 20, entirely random
         }
 
+	# The following creates a Non-Player Character by generating the stats.
+	# The algorithms used for generating stats help create easy-to-grasp stat associations
+	# These stats generally range from 0 to 20, but sometimes -20 to 20 when an "antithesis" of a stat is possible
     def populatecharacter(self):
         # Health can be between 10 and 300, by intervals of 10.
         self.characteristics["Health"] = (random.randint(1, 30) * 10)
         self.characteristics["MaxHealth"] = self.characteristics["Health"]
-        # ...maybe include the possibility that the NPC has already taken some damage...?
+        # TODO ...maybe include the possibility that the NPC has already taken some damage...?
 
         # Resolve can be between 1 and 20, based on health
         average = (self.characteristics["MaxHealth"]//10 + random.randint(1, 20) + random.randint(1, 20))
@@ -81,14 +89,14 @@ class Sidequest:
         average += random.randint(-20, 20)
         averagedivider += 1
         # ^Aggro modified on random basis
-        average += random.randint(0, 20)
-        averagedivider += 1
+        #average += random.randint(0, 20)
+        #averagedivider += 1
         # ^Aggro skew (intended to increase aggression in NPCs
         self.characteristics["Aggro"] = average//averagedivider
 
     def charactergetaggro(self):
         if self.characteristics["Aggro"] < -12:
-            return "Enamoured"
+            return "Enamored"
         elif self.characteristics["Aggro"] < -6:
             return "Attached"
         elif self.characteristics["Aggro"] < 0:
@@ -103,27 +111,71 @@ class Sidequest:
             return "Hateful"
 
     def charactercheckaggro(self):
+        #self.clearconsole()
         name = self.characteristics["Name"]
         data = self.charactergetaggro()
         response = "" + name + " seems to be " + data.lower() + " towards you."
         print(response)
 
+    def createname(self):
+        name = ""
+        consonants = "bcdfghjklmnpqrstvwxz"
+        vowels = "aeiouy"
+        #remove all possible offensive names
+        while (name.lower() == "" or name.lower() == "cuq" or name.lower() == "fag" or name.lower() == "fuc" or name.lower() == "fuk" or name.lower() == "vag" or name.lower() == "dam" or name.lower() == "hor" or name.lower() == "suk" or name.lower() == "suc" or name.lower() == "sux" or name.lower() == "fux" or name.lower() == "cux" or name.lower() == "kux" or name.lower() == "dic" or name.lower() == "dik" or name.lower() == "dix" or name.lower() == "nig" or name.lower() == "neg" or name.lower() == "gay" or name.lower() == "cum" or name.lower() == "kum" or name.lower() == "kuq" or name.lower() == "kuk" or name.lower() == "kuc" or name.lower() == "cuk"):
+            name = "" + random.choice(consonants).upper()
+            name = name + random.choice(vowels).lower()
+            name = name + random.choice(consonants).lower()
+        return name
+		
+    def charactergetname(self):
+        #self.clearconsole()
+        response = ""
+        if self.characteristics["Name"] == "???":
+            self.characteristics["Name"] = self.createname()
+            response = "You introduce yourself... he also introduces himself:\n"
+            response = response + "\"My name is " + self.characteristics["Name"] + ".\""
+        else:
+            response = response + "\"We have already been introduced...\"\n"
+            response = response + "\"I am " + self.characteristics["Name"] + ", remember?\"\n"
+            aggrolevel = self.charactergetaggro()
+            if aggrolevel == "Enamored":
+                response = response + self.characteristics["Name"] + " seems hurt that you forgot..."
+            elif aggrolevel == "Attached":
+                response = response + self.characteristics["Name"] + " seems slightly upset you forgot..."
+            elif aggrolevel == "Friendly":
+                response = response + self.characteristics["Name"] + " doesn't seem too bothered you forgot."
+            elif aggrolevel == "Neutral":
+                response = response + self.characteristics["Name"] + " isn't bothered at all you forgot."
+            elif aggrolevel == "Aloof":
+                response = response + self.characteristics["Name"] + " seems not to like you much anyway."
+            elif aggrolevel == "Hostile":
+                response = response + self.characteristics["Name"] + " seems like this is another reason not to like you."
+            else:
+                response = response + self.characteristics["Name"] + " seems not to care, but is mad at you for forgetting anyway."
+        print(response)
+		
+	#This code doesn't work currently...
+    def clearconsole(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
+
     def turn(self):
         choice = ""
-        name = self.characteristics["Name"]
-        byeoption = "2"
+        byeoption = "A"
         while choice != byeoption:
             if (self.turnnumber == 0):
-                print("You have encountered " + name + "!\n")
+                print("You have encountered " + self.characteristics["Name"] + "!\n")
             else:
-                print("" + name + " is waiting for you...\n")
+                print("" + self.characteristics["Name"] + " is waiting for you...\n")
             print("What would you like to do?")
-            print("1. Check\t2. Bye")
+            print("1. Check\t2. Introduce\nA. Abort/Say Goodbye")
             choice = input("Enter number: ")
             print("\n\n")
             if choice == "1":
                 self.charactercheckaggro()
-            elif choice == byeoption:
+            elif choice == "2":
+                self.charactergetname()
+            elif choice.upper() == byeoption:
                 break
             else:
                 print("Bad input! Try again...")
