@@ -2,6 +2,12 @@
 Creating a small NPC generator/interaction tool via console to learn Python
 The purpose of the code is not to necessarily create a final project but to learn Python
 
+## Quick-Start
+* With Python installed and the PATH set up... run the following in the command line:
+Python Sidequest.py
+* Follow the text-based prompts
+* There is no goal, just see what you can gather about the character you encountered
+
 ## Key Notes
 * The code is heavily documented for the benefit of the code reader
 * Code review is the primary purpose of this project
@@ -17,4 +23,5 @@ The purpose of the code is not to necessarily create a final project but to lear
 * Implement chat-bot-esque dialects and interactions
 * Provide additional behavioral changes from stats
 * Allow player to react to NPC behaviors
-* Provide a goal for any single NPC encounter (may be unachievable if the wrong path is taken)
+* Provide a goal for any single NPC encounter (may be unachievable if the wrong path 
+is taken)
