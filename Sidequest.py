@@ -1,14 +1,16 @@
-import sys
+# The following code was meant to be part of a larger game in which
+# a user could have interactions with other characters.
+# This has since become standalone side-code that can run on its own
+# but has no goal.
 import random
 import os
-import string
 
 # Sidequest Methodology
 # Define a sidequest as a turn-based interaction between player & NPC
 # TurnNumber: The turn number
 # Characteristics: Dictionary of values containing data about stats,
 # populated by a call.
-class Sidequest:
+class SideQuest:
 
 	# The following is the initialization of the Sidequest object, originally meant to be a
 	# new state for a larger game.
@@ -25,12 +27,13 @@ class Sidequest:
 
 	# The following creates a Non-Player Character by generating the stats.
 	# The algorithms used for generating stats help create easy-to-grasp stat associations
-	# These stats generally range from 0 to 20, but sometimes -20 to 20 when an "antithesis" of a stat is possible
+	# These stats generally range from 0 to 20, but sometimes -20 to 20 when an "antithesis"
+    # of a stat is possible
     def populatecharacter(self):
+
         # Health can be between 10 and 300, by intervals of 10.
         self.characteristics["Health"] = (random.randint(1, 30) * 10)
         self.characteristics["MaxHealth"] = self.characteristics["Health"]
-        # TODO ...maybe include the possibility that the NPC has already taken some damage...?
 
         # Resolve can be between 1 and 20, based on health
         average = (self.characteristics["MaxHealth"]//10 + random.randint(1, 20) + random.randint(1, 20))
@@ -94,6 +97,8 @@ class Sidequest:
         # ^Aggro skew (intended to increase aggression in NPCs
         self.characteristics["Aggro"] = average//averagedivider
 
+    # Returns a string describing the NPC's attitude
+    # Can also be used to obtain a generalized attitude
     def charactergetaggro(self):
         if self.characteristics["Aggro"] < -12:
             return "Enamored"
@@ -107,9 +112,9 @@ class Sidequest:
             return "Aloof"
         elif self.characteristics["Aggro"] < 12:
             return "Hostile"
-        else:
-            return "Hateful"
+        return "Hateful"
 
+    # Prints a message about the attitude of the NPC towards the player
     def charactercheckaggro(self):
         #self.clearconsole()
         name = self.characteristics["Name"]
@@ -117,6 +122,8 @@ class Sidequest:
         response = "" + name + " seems to be " + data.lower() + " towards you."
         print(response)
 
+    # Generates and returns a name, sparing some offensive possibilities
+    # Names consist of a consonant, vowel, and consonant
     def createname(self):
         name = ""
         consonants = "bcdfghjklmnpqrstvwxz"
@@ -127,7 +134,10 @@ class Sidequest:
             name = name + random.choice(vowels).lower()
             name = name + random.choice(consonants).lower()
         return name
-		
+
+    # Asks the character about their name, can return different possibilities
+    # Attitude towards the player changes the outcome considerably if the
+    # name was already given to the player.
     def charactergetname(self):
         #self.clearconsole()
         response = ""
@@ -154,16 +164,21 @@ class Sidequest:
             else:
                 response = response + self.characteristics["Name"] + " seems not to care, but is mad at you for forgetting anyway."
         print(response)
-		
-	#This code doesn't work currently...
+
+	# This code doesn't work currently...
+    # Please ignore, might be worth returning to later
     def clearconsole(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
+    # This keeps the player in a loop until they exit the interaction.
+    # This code provides options, and calls methods for player choices.
+    # This code will get extremely complex with additional features.
+    # If this code were to be developed further, a rework would be in line.
     def turn(self):
         choice = ""
         byeoption = "A"
         while choice != byeoption:
-            if (self.turnnumber == 0):
+            if self.turnnumber == 0:
                 print("You have encountered " + self.characteristics["Name"] + "!\n")
             else:
                 print("" + self.characteristics["Name"] + " is waiting for you...\n")
@@ -181,9 +196,7 @@ class Sidequest:
                 print("Bad input! Try again...")
             self.turnnumber = self.turnnumber + 1
 
-
-
-sidequest = Sidequest()
+sidequest = SideQuest()
 sidequest.populatecharacter()
 
 print(sidequest.characteristics)
